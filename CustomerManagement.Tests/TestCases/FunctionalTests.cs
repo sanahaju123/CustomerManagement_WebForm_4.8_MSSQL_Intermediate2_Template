@@ -8,6 +8,7 @@ using CustomerManagementApp.DAL.Services;
 using Xunit;
 using Xunit.Abstractions;
 using System.Threading.Tasks;
+using CustomerManagementApp.Model;
 
 namespace CustomerManagementApp.Tests.TestCases
 {
@@ -15,6 +16,7 @@ namespace CustomerManagementApp.Tests.TestCases
     {
         private readonly ITestOutputHelper _output;
         private readonly ICustomerService _customerService;
+        private readonly CustomerModel _customerModel;
         public readonly Mock<ICustomerRepository> customerservice = new Mock<ICustomerRepository>();
 
         private static string type = "Functional";
@@ -23,6 +25,13 @@ namespace CustomerManagementApp.Tests.TestCases
         {
             _customerService = new CustomerService(customerservice.Object);
             _output = output;
+            _customerModel = new CustomerModel
+            {
+                Id = 1,
+                DateOfBirth = DateTime.Now,
+                FirstName = "Name",
+                LastName = "Lname"
+            };
         }
 
         [Fact]
@@ -205,11 +214,11 @@ namespace CustomerManagementApp.Tests.TestCases
             //Action
             try
             {
-                customerservice.Setup(repos => repos.GetById("1"));
+                customerservice.Setup(repos => repos.GetById("1")).Returns(_customerModel);
                 var result = _customerService.GetById("1");
 
                 //Assertion
-                if (result is string)
+                if (result is CustomerModel)
                 {
                     res = true;
                 }
@@ -247,11 +256,11 @@ namespace CustomerManagementApp.Tests.TestCases
             //Action
             try
             {
-                customerservice.Setup(repos => repos.GetById("1"));
+                customerservice.Setup(repos => repos.GetById("1")).Returns(_customerModel);
                 var result = _customerService.GetById("1");
 
                 //Assertion
-                if (result is string && id!=null)
+                if (result is CustomerModel && id != null)
                 {
                     res = true;
                 }

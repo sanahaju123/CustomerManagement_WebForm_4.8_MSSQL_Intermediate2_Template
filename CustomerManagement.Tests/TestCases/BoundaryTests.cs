@@ -9,6 +9,7 @@ using CustomerManagementApp.DAL.Interfaces;
 using CustomerManagementApp.DAL.Services;
 using Xunit;
 using Xunit.Abstractions;
+using CustomerManagementApp.Model;
 
 namespace CustomerManagementApp.Tests.TestCases
 {
@@ -16,6 +17,7 @@ namespace CustomerManagementApp.Tests.TestCases
     {
         private readonly ITestOutputHelper _output;
         private readonly ICustomerService _customerService;
+        private readonly CustomerModel _customerModel;
         public readonly Mock<ICustomerRepository> customerservice = new Mock<ICustomerRepository>();
 
         private static string type = "Boundary";
@@ -24,6 +26,13 @@ namespace CustomerManagementApp.Tests.TestCases
         {
             _customerService = new CustomerService(customerservice.Object);
             _output = output;
+            _customerModel = new CustomerModel
+            {
+                Id = 1,
+                DateOfBirth = DateTime.Now,
+                FirstName = "Name",
+                LastName = "Lname"
+            };
         }
 
         [Fact]
@@ -42,7 +51,7 @@ namespace CustomerManagementApp.Tests.TestCases
                 var result = _customerService.Add();
 
                 //Assertion
-                if (result!= null)
+                if (result != null)
                 {
                     res = true;
                 }
@@ -84,7 +93,7 @@ namespace CustomerManagementApp.Tests.TestCases
                 var result = _customerService.Delete();
 
                 //Assertion
-                if (result!= null)
+                if (result != null)
                 {
                     res = true;
                 }
@@ -164,7 +173,7 @@ namespace CustomerManagementApp.Tests.TestCases
             //Action
             try
             {
-                customerservice.Setup(repos => repos.GetById("1"));
+                customerservice.Setup(repos => repos.GetById("1")).Returns(_customerModel);
                 var result = _customerService.GetById("1");
 
                 //Assertion
@@ -206,7 +215,7 @@ namespace CustomerManagementApp.Tests.TestCases
             //Action
             try
             {
-                customerservice.Setup(repos => repos.GetAll());
+                customerservice.Setup(repos => repos.GetAll()).Returns("");
                 var result = _customerService.GetAll();
 
                 //Assertion
